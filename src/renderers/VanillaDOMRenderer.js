@@ -101,7 +101,7 @@ export class VanillaDOMRenderer {
     const navigation = this.createElement('div', 'calendar-navigation');
 
     // Previous button
-    const prevBtn = this.createElement('button', 'calendar-nav-btn', '‹');
+    const prevBtn = this.createElement('button', 'calendar-nav-btn', '←');
     prevBtn.setAttribute('data-action', 'previous');
     prevBtn.setAttribute('aria-label', 'Previous');
     navigation.appendChild(prevBtn);
@@ -112,7 +112,7 @@ export class VanillaDOMRenderer {
     navigation.appendChild(todayBtn);
 
     // Next button
-    const nextBtn = this.createElement('button', 'calendar-nav-btn', '›');
+    const nextBtn = this.createElement('button', 'calendar-nav-btn', '→');
     nextBtn.setAttribute('data-action', 'next');
     nextBtn.setAttribute('aria-label', 'Next');
     navigation.appendChild(nextBtn);
