@@ -386,15 +386,15 @@ export class VanillaDOMRenderer {
         const endHour = event.end.getHours();
         const endMinute = event.end.getMinutes();
 
-        // Calculate slot positions
-        const startSlot = (startHour * slotsPerHour) + Math.floor(startMinute / intervalMinutes);
-        const endSlot = (endHour * slotsPerHour) + Math.ceil(endMinute / intervalMinutes);
+        // Calculate slot positions more precisely
+        const startSlot = (startHour * slotsPerHour) + (startMinute / intervalMinutes);
+        const endSlot = (endHour * slotsPerHour) + (endMinute / intervalMinutes);
         const slotHeight = 48; // Height of each time slot in pixels
 
         // Position the event
         eventEl.style.position = 'absolute';
         eventEl.style.top = `${startSlot * slotHeight + 2}px`;
-        eventEl.style.height = `${(endSlot - startSlot) * slotHeight - 4}px`;
+        eventEl.style.height = `${Math.max((endSlot - startSlot) * slotHeight - 4, 20)}px`;
         eventEl.style.left = '2px';
         eventEl.style.right = '2px';
         eventEl.style.zIndex = '1';
@@ -550,15 +550,15 @@ export class VanillaDOMRenderer {
       const endHour = event.end.getHours();
       const endMinute = event.end.getMinutes();
 
-      // Calculate slot positions
-      const startSlot = (startHour * slotsPerHour) + Math.floor(startMinute / intervalMinutes);
-      const endSlot = (endHour * slotsPerHour) + Math.ceil(endMinute / intervalMinutes);
+      // Calculate slot positions more precisely
+      const startSlot = (startHour * slotsPerHour) + (startMinute / intervalMinutes);
+      const endSlot = (endHour * slotsPerHour) + (endMinute / intervalMinutes);
       const slotHeight = 48; // Height of each time slot in pixels
 
       // Position the event
       eventEl.style.position = 'absolute';
       eventEl.style.top = `${startSlot * slotHeight + 2}px`;
-      eventEl.style.height = `${(endSlot - startSlot) * slotHeight - 4}px`;
+      eventEl.style.height = `${Math.max((endSlot - startSlot) * slotHeight - 4, 20)}px`;
       eventEl.style.left = '2px';
       eventEl.style.right = '2px';
       eventEl.style.zIndex = '1';
