@@ -240,6 +240,25 @@ export class Calendar {
   }
 
   /**
+   * Get overlapping event groups for a date
+   * @param {Date} date - The date to check
+   * @param {boolean} timedOnly - Only include timed events
+   * @returns {Array<Event[]>} Array of event groups that overlap
+   */
+  getOverlapGroups(date, timedOnly = true) {
+    return this.eventStore.getOverlapGroups(date, timedOnly);
+  }
+
+  /**
+   * Calculate event positions for rendering
+   * @param {Event[]} events - Array of overlapping events
+   * @returns {Map<string, {column: number, totalColumns: number}>} Position data
+   */
+  calculateEventPositions(events) {
+    return this.eventStore.calculateEventPositions(events);
+  }
+
+  /**
    * Get the current view's data
    * @returns {Object} View-specific data
    */

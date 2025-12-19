@@ -373,12 +373,12 @@ export class VanillaDOMRenderer {
       }
 
       // Get overlap groups for this day to properly position events
-      const overlapGroups = this.calendar.eventStore.getOverlapGroups(day.date, true);
+      const overlapGroups = this.calendar.getOverlapGroups(day.date, true);
 
       // Process each overlap group
       overlapGroups.forEach(group => {
         // Calculate positions for all events in this group
-        const positions = this.calendar.eventStore.calculateEventPositions(group);
+        const positions = this.calendar.calculateEventPositions(group);
 
         // Render each event with proper positioning
         group.forEach(event => {
@@ -549,12 +549,12 @@ export class VanillaDOMRenderer {
     }
 
     // Get overlap groups for this day to properly position events
-    const overlapGroups = this.calendar.eventStore.getOverlapGroups(viewData.date, true);
+    const overlapGroups = this.calendar.getOverlapGroups(viewData.date, true);
 
     // Process each overlap group
     overlapGroups.forEach(group => {
       // Calculate positions for all events in this group
-      const positions = this.calendar.eventStore.calculateEventPositions(group);
+      const positions = this.calendar.calculateEventPositions(group);
 
       // Render each event with proper positioning
       group.forEach(event => {
