@@ -443,7 +443,7 @@ export class VanillaDOMRenderer {
     }
     dayContainer.appendChild(dayHeader);
 
-    // All-day events
+    // All-day events section
     if (viewData.allDayEvents.length > 0) {
       const allDaySection = this.createElement('div', 'calendar-allday-section');
       const allDayLabel = this.createElement('div', 'calendar-allday-label', 'All Day');
@@ -454,43 +454,136 @@ export class VanillaDOMRenderer {
         const eventEl = this.createElement('div', 'calendar-allday-event');
         eventEl.textContent = event.title;
         eventEl.setAttribute('data-event-id', event.id);
+
+        if (event.metadata && event.metadata.colorClass) {
+          const colorMap = {
+            'event-blue': '#1a73e8',
+            'event-green': '#34a853',
+            'event-orange': '#fa903e',
+            'event-red': '#ea4335',
+            'event-purple': '#9334e6'
+          };
+          const color = colorMap[event.metadata.colorClass] || '#1a73e8';
+          eventEl.style.backgroundColor = color;
+          eventEl.style.color = 'white';
+        }
+
         allDayEvents.appendChild(eventEl);
       });
       allDaySection.appendChild(allDayEvents);
-
       dayContainer.appendChild(allDaySection);
     }
 
-    // Hourly timeline
-    const timeline = this.createElement('div', 'calendar-day-timeline');
+    // Create scrollable container for timeline
+    const scrollContainer = this.createElement('div', 'calendar-day-scroll-container');
 
-    viewData.hours.forEach(hour => {
-      const hourRow = this.createElement('div', 'calendar-hour-row');
+    // Time grid with similar structure to week view
+    const timeGrid = this.createElement('div', 'calendar-day-time-grid');
 
-      // Time label
-      const timeLabel = this.createElement('div', 'calendar-hour-label', hour.time);
-      hourRow.appendChild(timeLabel);
+    // Generate time slots (with 30min interval support)
+    const intervalMinutes = this.show30MinIntervals ? 30 : 60;
+    const slotsPerHour = 60 / intervalMinutes;
 
-      // Events container
-      const eventsContainer = this.createElement('div', 'calendar-hour-events');
+    // Create time labels column
+    const timeColumn = this.createElement('div', 'day-time-labels-column');
+    for (let hour = 0; hour < 24; hour++) {
+      for (let slot = 0; slot < slotsPerHour; slot++) {
+        const minute = slot * intervalMinutes;
+        const timeLabel = this.createElement('div', 'day-time-label-slot');
 
-      hour.events.forEach(event => {
-        const eventEl = this.createElement('div', 'calendar-hour-event');
-        eventEl.textContent = `${event.title} (${this.formatEventTime(event)})`;
-        eventEl.setAttribute('data-event-id', event.id);
+        if (slot === 0 || this.show30MinIntervals) {
+          let hourDisplay = hour === 0 ? '12' :
+                           hour < 12 ? `${hour}` :
+                           hour === 12 ? '12' :
+                           `${hour - 12}`;
+          const period = hour < 12 ? 'AM' : 'PM';
 
-        if (event.backgroundColor) {
-          eventEl.style.backgroundColor = event.backgroundColor;
+          if (minute === 0) {
+            timeLabel.textContent = `${hourDisplay}:00 ${period}`;
+          } else {
+            timeLabel.textContent = `${hourDisplay}:30 ${period}`;
+            timeLabel.classList.add('half-hour');
+          }
         }
+        timeColumn.appendChild(timeLabel);
+      }
+    }
+    timeGrid.appendChild(timeColumn);
 
-        eventsContainer.appendChild(eventEl);
-      });
+    // Create single day column with events
+    const dayColumn = this.createElement('div', 'day-event-column');
+    dayColumn.setAttribute('data-date', this.formatLocalDate(viewData.date));
 
-      hourRow.appendChild(eventsContainer);
-      timeline.appendChild(hourRow);
+    // Create time slots for visual grid
+    for (let hour = 0; hour < 24; hour++) {
+      for (let slot = 0; slot < slotsPerHour; slot++) {
+        const timeSlot = this.createElement('div', 'day-time-slot');
+        timeSlot.setAttribute('data-hour', hour);
+        timeSlot.setAttribute('data-minute', slot * intervalMinutes);
+
+        // Add click handler for creating events
+        timeSlot.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('calendar-day-event')) {
+            const clickDate = new Date(viewData.date);
+            clickDate.setHours(hour, slot * intervalMinutes, 0, 0);
+            this.showCreateEventDialog(clickDate);
+          }
+        });
+
+        dayColumn.appendChild(timeSlot);
+      }
+    }
+
+    // Add events as absolutely positioned elements
+    const timedEvents = viewData.hours.reduce((acc, hour) => {
+      return acc.concat(hour.events);
+    }, []);
+
+    timedEvents.forEach(event => {
+      const eventEl = this.createElement('div', 'calendar-day-event');
+      eventEl.textContent = event.title;
+      eventEl.setAttribute('data-event-id', event.id);
+
+      // Calculate position and height
+      const startHour = event.start.getHours();
+      const startMinute = event.start.getMinutes();
+      const endHour = event.end.getHours();
+      const endMinute = event.end.getMinutes();
+
+      // Calculate slot positions
+      const startSlot = (startHour * slotsPerHour) + Math.floor(startMinute / intervalMinutes);
+      const endSlot = (endHour * slotsPerHour) + Math.ceil(endMinute / intervalMinutes);
+      const slotHeight = 48; // Height of each time slot in pixels
+
+      // Position the event
+      eventEl.style.position = 'absolute';
+      eventEl.style.top = `${startSlot * slotHeight + 2}px`;
+      eventEl.style.height = `${(endSlot - startSlot) * slotHeight - 4}px`;
+      eventEl.style.left = '2px';
+      eventEl.style.right = '2px';
+      eventEl.style.zIndex = '1';
+
+      // Apply color
+      if (event.metadata && event.metadata.colorClass) {
+        const colorMap = {
+          'event-blue': '#1a73e8',
+          'event-green': '#34a853',
+          'event-orange': '#fa903e',
+          'event-red': '#ea4335',
+          'event-purple': '#9334e6'
+        };
+        const color = colorMap[event.metadata.colorClass] || '#1a73e8';
+        eventEl.style.backgroundColor = color;
+      } else if (event.backgroundColor) {
+        eventEl.style.backgroundColor = event.backgroundColor;
+      }
+
+      dayColumn.appendChild(eventEl);
     });
 
-    dayContainer.appendChild(timeline);
+    timeGrid.appendChild(dayColumn);
+    scrollContainer.appendChild(timeGrid);
+    dayContainer.appendChild(scrollContainer);
 
     return dayContainer;
   }
