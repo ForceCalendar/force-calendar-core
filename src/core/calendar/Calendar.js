@@ -308,7 +308,8 @@ export class Calendar {
           events: this.getEventsForDate(dayDate)
         });
 
-        currentDate.setDate(currentDate.getDate() + 1);
+        // Use DateUtils.addDays to handle month boundaries correctly
+        currentDate = DateUtils.addDays(currentDate, 1);
       }
 
       weeks.push(week);
@@ -345,9 +346,13 @@ export class Calendar {
         dayName: DateUtils.getDayName(dayDate, this.state.get('locale')),
         isToday: DateUtils.isToday(dayDate),
         isWeekend: dayDate.getDay() === 0 || dayDate.getDay() === 6,
-        events: this.getEventsForDate(dayDate)
+        events: this.getEventsForDate(dayDate),
+        // Add overlap groups for positioning overlapping events
+        overlapGroups: this.eventStore.getOverlapGroups(dayDate, true),
+        getEventPositions: (events) => this.eventStore.calculateEventPositions(events)
       });
-      currentDate.setDate(currentDate.getDate() + 1);
+      // Use DateUtils.addDays to handle month boundaries correctly
+      currentDate = DateUtils.addDays(currentDate, 1);
     }
 
     return {
@@ -375,13 +380,16 @@ export class Calendar {
     for (let hour = 0; hour < 24; hour++) {
       const hourDate = new Date(date);
       hourDate.setHours(hour, 0, 0, 0);
+      const hourEnd = new Date(date);
+      hourEnd.setHours(hour + 1, 0, 0, 0);
 
       hours.push({
         hour,
         time: DateUtils.formatTime(hourDate, this.state.get('locale')),
         events: timedEvents.filter(event => {
-          const eventHour = event.start.getHours();
-          return eventHour === hour;
+          // Check if event occurs during this hour (not just starts)
+          // Event occurs in this hour if it overlaps with the hour slot
+          return event.start < hourEnd && event.end > hourDate;
         })
       });
     }

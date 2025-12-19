@@ -216,6 +216,152 @@ export class EventStore {
   }
 
   /**
+   * Get events that overlap with a given time range
+   * @param {Date} start - Start time
+   * @param {Date} end - End time
+   * @param {string} excludeId - Optional event ID to exclude (useful when checking for conflicts)
+   * @returns {Event[]} Array of overlapping events
+   */
+  getOverlappingEvents(start, end, excludeId = null) {
+    const overlapping = [];
+
+    // Get all events in the date range
+    const startDate = DateUtils.startOfDay(start);
+    const endDate = DateUtils.endOfDay(end);
+    const dates = DateUtils.getDateRange(startDate, endDate);
+
+    // Collect all events from those dates
+    const checkedIds = new Set();
+    dates.forEach(date => {
+      const dateStr = date.toDateString();
+      const eventIds = this.indices.byDate.get(dateStr) || new Set();
+
+      eventIds.forEach(id => {
+        if (!checkedIds.has(id) && id !== excludeId) {
+          checkedIds.add(id);
+          const event = this.events.get(id);
+
+          if (event && event.overlaps({ start, end })) {
+            overlapping.push(event);
+          }
+        }
+      });
+    });
+
+    return overlapping.sort((a, b) => a.start - b.start);
+  }
+
+  /**
+   * Check if an event would conflict with existing events
+   * @param {Date} start - Start time
+   * @param {Date} end - End time
+   * @param {string} excludeId - Optional event ID to exclude
+   * @returns {boolean} True if there are conflicts
+   */
+  hasConflicts(start, end, excludeId = null) {
+    return this.getOverlappingEvents(start, end, excludeId).length > 0;
+  }
+
+  /**
+   * Get events grouped by overlapping time slots
+   * Useful for calculating event positions in week/day views
+   * @param {Date} date - The date to analyze
+   * @param {boolean} timedOnly - Only include timed events (not all-day)
+   * @returns {Array<Event[]>} Array of event groups that overlap
+   */
+  getOverlapGroups(date, timedOnly = true) {
+    let events = this.getEventsForDate(date);
+
+    if (timedOnly) {
+      events = events.filter(e => !e.allDay);
+    }
+
+    const groups = [];
+    const processed = new Set();
+
+    events.forEach(event => {
+      if (processed.has(event.id)) return;
+
+      // Start a new group with this event
+      const group = [event];
+      processed.add(event.id);
+
+      // Find all events that overlap with any event in this group
+      let i = 0;
+      while (i < group.length) {
+        const currentEvent = group[i];
+
+        events.forEach(otherEvent => {
+          if (!processed.has(otherEvent.id) && currentEvent.overlaps(otherEvent)) {
+            group.push(otherEvent);
+            processed.add(otherEvent.id);
+          }
+        });
+
+        i++;
+      }
+
+      groups.push(group);
+    });
+
+    return groups;
+  }
+
+  /**
+   * Calculate positions for overlapping events (for rendering)
+   * @param {Event[]} events - Array of overlapping events
+   * @returns {Map<string, {column: number, totalColumns: number}>} Position data for each event
+   */
+  calculateEventPositions(events) {
+    const positions = new Map();
+
+    if (events.length === 0) return positions;
+
+    // Sort by start time, then by duration (longer events first)
+    events.sort((a, b) => {
+      const startDiff = a.start - b.start;
+      if (startDiff !== 0) return startDiff;
+      return (b.end - b.start) - (a.end - a.start);
+    });
+
+    // Track which columns are occupied at each time
+    const columns = [];
+
+    events.forEach(event => {
+      // Find the first available column
+      let column = 0;
+      while (column < columns.length) {
+        const columnEvents = columns[column];
+        const hasConflict = columnEvents.some(e => e.overlaps(event));
+
+        if (!hasConflict) {
+          break;
+        }
+        column++;
+      }
+
+      // Add event to the column
+      if (!columns[column]) {
+        columns[column] = [];
+      }
+      columns[column].push(event);
+
+      positions.set(event.id, {
+        column: column,
+        totalColumns: 0 // Will be updated after all events are placed
+      });
+    });
+
+    // Update total columns for all events
+    const totalColumns = columns.length;
+    positions.forEach(pos => {
+      pos.totalColumns = totalColumns;
+    });
+
+    return positions;
+  }
+
+  /**
    * Get events for a date range
    * @param {Date} start - Start date
    * @param {Date} end - End date
