@@ -3,6 +3,7 @@ import { DateUtils } from '../calendar/DateUtils.js';
 import { RecurrenceEngine } from './RecurrenceEngine.js';
 import { PerformanceOptimizer } from '../performance/PerformanceOptimizer.js';
 import { ConflictDetector } from '../conflicts/ConflictDetector.js';
+import { TimezoneManager } from '../timezone/TimezoneManager.js';
 
 /**
  * EventStore - Manages calendar events with efficient querying
@@ -15,11 +16,11 @@ export class EventStore {
     /** @type {Map<string, Event>} */
     this.events = new Map();
 
-    // Indices for efficient queries
+    // Indices for efficient queries (using UTC for consistent indexing)
     this.indices = {
-      /** @type {Map<string, Set<string>>} Date string -> Set of event IDs */
+      /** @type {Map<string, Set<string>>} UTC Date string -> Set of event IDs */
       byDate: new Map(),
-      /** @type {Map<string, Set<string>>} YYYY-MM -> Set of event IDs */
+      /** @type {Map<string, Set<string>>} YYYY-MM (UTC) -> Set of event IDs */
       byMonth: new Map(),
       /** @type {Set<string>} Set of recurring event IDs */
       recurring: new Set(),
@@ -28,6 +29,12 @@ export class EventStore {
       /** @type {Map<string, Set<string>>} Status -> Set of event IDs */
       byStatus: new Map()
     };
+
+    // Timezone manager for conversions
+    this.timezoneManager = new TimezoneManager();
+
+    // Default timezone for the store (can be overridden)
+    this.defaultTimezone = config.timezone || this.timezoneManager.getSystemTimezone();
 
     // Performance optimizer
     this.optimizer = new PerformanceOptimizer(config.performance);
@@ -277,18 +284,38 @@ export class EventStore {
   /**
    * Get events for a specific date
    * @param {Date} date - The date to query
+   * @param {string} [timezone] - Timezone for the query (defaults to store timezone)
    * @returns {Event[]} Events occurring on the date, sorted by start time
    */
-  getEventsForDate(date) {
-    const dateStr = date.toDateString();
+  getEventsForDate(date, timezone = null) {
+    timezone = timezone || this.defaultTimezone;
+
+    // Convert the date to UTC range for the timezone
+    const startOfDayLocal = new Date(date);
+    startOfDayLocal.setHours(0, 0, 0, 0);
+    const endOfDayLocal = new Date(date);
+    endOfDayLocal.setHours(23, 59, 59, 999);
+
+    // Convert to UTC for querying
+    const startUTC = this.timezoneManager.toUTC(startOfDayLocal, timezone);
+    const endUTC = this.timezoneManager.toUTC(endOfDayLocal, timezone);
+
+    // Use UTC date strings for index lookup
+    const dateStr = startUTC.toDateString();
     const eventIds = this.indices.byDate.get(dateStr) || new Set();
 
     return Array.from(eventIds)
       .map(id => this.events.get(id))
-      .filter(event => event) // Filter out any null values
+      .filter(event => {
+        if (!event) return false;
+        // Additional check to ensure event actually overlaps with the day in the given timezone
+        return event.startUTC <= endUTC && event.endUTC >= startUTC;
+      })
       .sort((a, b) => {
-        // Sort by start time, then by duration
-        const timeCompare = a.start - b.start;
+        // Sort by start time in the specified timezone
+        const aStart = a.getStartInTimezone(timezone);
+        const bStart = b.getStartInTimezone(timezone);
+        const timeCompare = aStart - bStart;
         if (timeCompare !== 0) return timeCompare;
         return b.duration - a.duration; // Longer events first
       });
@@ -444,11 +471,29 @@ export class EventStore {
    * Get events for a date range
    * @param {Date} start - Start date
    * @param {Date} end - End date
-   * @param {boolean} expandRecurring - Whether to expand recurring events
+   * @param {boolean|string} expandRecurring - Whether to expand recurring events, or timezone string
+   * @param {string} [timezone] - Timezone for the query (if expandRecurring is boolean)
    * @returns {Event[]}
    */
-  getEventsInRange(start, end, expandRecurring = true) {
-    const baseEvents = this.queryEvents({ start, end, sort: 'start' });
+  getEventsInRange(start, end, expandRecurring = true, timezone = null) {
+    // Handle overloaded parameters
+    if (typeof expandRecurring === 'string') {
+      timezone = expandRecurring;
+      expandRecurring = true;
+    }
+
+    timezone = timezone || this.defaultTimezone;
+
+    // Convert range to UTC for querying
+    const startUTC = this.timezoneManager.toUTC(start, timezone);
+    const endUTC = this.timezoneManager.toUTC(end, timezone);
+
+    // Query using UTC times
+    const baseEvents = this.queryEvents({
+      start: startUTC,
+      end: endUTC,
+      sort: 'start'
+    });
 
     if (!expandRecurring) {
       return baseEvents;
@@ -458,14 +503,19 @@ export class EventStore {
     const expandedEvents = [];
     baseEvents.forEach(event => {
       if (event.recurring && event.recurrenceRule) {
-        const occurrences = this.expandRecurringEvent(event, start, end);
+        const occurrences = this.expandRecurringEvent(event, start, end, timezone);
         expandedEvents.push(...occurrences);
       } else {
         expandedEvents.push(event);
       }
     });
 
-    return expandedEvents.sort((a, b) => a.start - b.start);
+    return expandedEvents.sort((a, b) => {
+      // Sort by start time in the specified timezone
+      const aStart = a.getStartInTimezone(timezone);
+      const bStart = b.getStartInTimezone(timezone);
+      return aStart - bStart;
+    });
   }
 
   /**
@@ -473,13 +523,18 @@ export class EventStore {
    * @param {Event} event - The recurring event
    * @param {Date} rangeStart - Start of the expansion range
    * @param {Date} rangeEnd - End of the expansion range
+   * @param {string} [timezone] - Timezone for the expansion
    * @returns {Event[]} Array of event occurrences
    */
-  expandRecurringEvent(event, rangeStart, rangeEnd) {
+  expandRecurringEvent(event, rangeStart, rangeEnd, timezone = null) {
     if (!event.recurring || !event.recurrenceRule) {
       return [event];
     }
 
+    timezone = timezone || this.defaultTimezone;
+
+    // Expand in the event's timezone for accurate recurrence calculation
+    const eventTimezone = event.timeZone || timezone;
     const occurrences = RecurrenceEngine.expandEvent(event, rangeStart, rangeEnd);
 
     return occurrences.map((occurrence, index) => {
@@ -488,6 +543,7 @@ export class EventStore {
         id: `${event.id}_occurrence_${index}`,
         start: occurrence.start,
         end: occurrence.end,
+        timeZone: eventTimezone,
         metadata: {
           ...event.metadata,
           recurringEventId: event.id,
@@ -553,11 +609,11 @@ export class EventStore {
       return;
     }
 
-    // Normal indexing for reasonable date ranges
-    const startDate = DateUtils.startOfDay(event.start);
-    const endDate = DateUtils.endOfDay(event.end);
+    // Use UTC times for consistent indexing across timezones
+    const startDate = DateUtils.startOfDay(new Date(event.startUTC || event.start));
+    const endDate = DateUtils.endOfDay(new Date(event.endUTC || event.end));
 
-    // For each day the event spans, add to date index
+    // For each day the event spans (in UTC), add to date index
     const dates = DateUtils.getDateRange(startDate, endDate);
 
     dates.forEach(date => {
@@ -569,7 +625,7 @@ export class EventStore {
       this.indices.byDate.get(dateStr).add(event.id);
     });
 
-    // Index by month(s)
+    // Index by month(s) using UTC
     const startMonth = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`;
     const endMonth = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}`;
 

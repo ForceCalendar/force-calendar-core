@@ -1,8 +1,11 @@
 /**
- * Event class - represents a calendar event
+ * Event class - represents a calendar event with timezone support
  * Pure JavaScript, no DOM dependencies
  * Locker Service compatible
  */
+
+import { TimezoneManager } from '../timezone/TimezoneManager.js';
+
 export class Event {
   /**
    * Create a new Event instance
@@ -24,6 +27,7 @@ export class Event {
     recurring = false,
     recurrenceRule = null,
     timeZone = null,
+    endTimeZone = null,
     status = 'confirmed',
     visibility = 'public',
     organizer = null,
@@ -42,12 +46,24 @@ export class Event {
     this.id = id;
     this.title = title;
 
-    // Ensure dates are Date objects
+    // Initialize timezone manager
+    this._timezoneManager = new TimezoneManager();
+
+    // Timezone handling
+    // Store the timezone the event was created in (wall-clock time)
+    this.timeZone = timeZone || this._timezoneManager.getSystemTimezone();
+    this.endTimeZone = endTimeZone || this.timeZone; // Different end timezone for flights etc.
+
+    // Store dates as provided (wall-clock time in event timezone)
     this.start = start instanceof Date ? start : new Date(start);
     this.end = end ? (end instanceof Date ? end : new Date(end)) : new Date(this.start);
 
-    // Validate date order
-    if (this.end < this.start) {
+    // Store UTC versions for efficient querying and comparison
+    this.startUTC = this._timezoneManager.toUTC(this.start, this.timeZone);
+    this.endUTC = this._timezoneManager.toUTC(this.end, this.endTimeZone);
+
+    // Validate date order using UTC times
+    if (this.endUTC < this.startUTC) {
       throw new Error('Event end time cannot be before start time');
     }
 
@@ -65,8 +81,8 @@ export class Event {
     this.recurring = recurring;
     this.recurrenceRule = recurrenceRule;
 
-    // Timezone - if not specified, events are in browser's local timezone
-    this.timeZone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // Store original timezone from system if not provided
+    this._originalTimeZone = timeZone || null;
 
     // Event status and visibility
     this.status = status;
@@ -105,9 +121,64 @@ export class Event {
    */
   get duration() {
     if (!this._cache.duration) {
-      this._cache.duration = this.end.getTime() - this.start.getTime();
+      // Use UTC times for accurate duration calculation
+      this._cache.duration = this.endUTC.getTime() - this.startUTC.getTime();
     }
     return this._cache.duration;
+  }
+
+  /**
+   * Get start date in a specific timezone
+   * @param {string} timezone - Target timezone
+   * @returns {Date} Start date in specified timezone
+   */
+  getStartInTimezone(timezone) {
+    if (timezone === this.timeZone) {
+      return new Date(this.start);
+    }
+    return this._timezoneManager.fromUTC(this.startUTC, timezone);
+  }
+
+  /**
+   * Get end date in a specific timezone
+   * @param {string} timezone - Target timezone
+   * @returns {Date} End date in specified timezone
+   */
+  getEndInTimezone(timezone) {
+    if (timezone === this.endTimeZone) {
+      return new Date(this.end);
+    }
+    return this._timezoneManager.fromUTC(this.endUTC, timezone);
+  }
+
+  /**
+   * Update event times preserving the timezone
+   * @param {Date} start - New start date
+   * @param {Date} end - New end date
+   * @param {string} [timezone] - Timezone for the new dates
+   */
+  updateTimes(start, end, timezone) {
+    const tz = timezone || this.timeZone;
+
+    this.start = start instanceof Date ? start : new Date(start);
+    this.end = end instanceof Date ? end : new Date(end);
+
+    if (timezone) {
+      this.timeZone = timezone;
+      this.endTimeZone = timezone;
+    }
+
+    // Update UTC versions
+    this.startUTC = this._timezoneManager.toUTC(this.start, this.timeZone);
+    this.endUTC = this._timezoneManager.toUTC(this.end, this.endTimeZone);
+
+    // Clear cache
+    this._cache = {};
+
+    // Validate
+    if (this.endUTC < this.startUTC) {
+      throw new Error('Event end time cannot be before start time');
+    }
   }
 
   /**
