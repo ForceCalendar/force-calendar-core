@@ -164,6 +164,46 @@ export default class LightningCalendarCore extends LightningElement {
         return this.currentView === 'list' ? 'brand' : 'neutral';
     }
 
+    get weekViewData() {
+        if (!this.isWeekView || !this.viewData) return null;
+
+        const days = this.viewData.days.map(dayData => ({
+            date: dayData.date.toISOString(),
+            dayName: dayData.dayName || this.getDayName(dayData.date),
+            dayNumber: dayData.date.getDate(),
+            isToday: dayData.isToday,
+            events: dayData.events || [],
+            hasEvents: dayData.events && dayData.events.length > 0
+        }));
+
+        return { days };
+    }
+
+    get dayViewData() {
+        if (!this.isDayView || !this.viewData) return null;
+
+        return {
+            dayName: this.viewData.dayName || this.getDayName(this.viewData.date),
+            isToday: this.viewData.isToday,
+            allDayEvents: this.viewData.allDayEvents || [],
+            hours: this.viewData.hours || []
+        };
+    }
+
+    get listViewData() {
+        if (!this.isListView || !this.viewData) return null;
+
+        const days = this.viewData.days.map(dayData => ({
+            date: dayData.date.toISOString(),
+            dateFormatted: this.formatDate(dayData.date),
+            dayName: dayData.dayName,
+            events: dayData.events || [],
+            hasEvents: dayData.events && dayData.events.length > 0
+        }));
+
+        return { days };
+    }
+
     // Event handlers
     handlePrevious() {
         this.calendar.previous();
@@ -231,6 +271,11 @@ export default class LightningCalendarCore extends LightningElement {
             return 'calendar-day other-month';
         }
         return 'calendar-day';
+    }
+
+    getDayName(date) {
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[date.getDay()];
     }
 
     getMonthName(monthIndex) {
