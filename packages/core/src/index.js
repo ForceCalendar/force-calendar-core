@@ -1,5 +1,5 @@
 /**
- * Lightning Calendar - Main entry point
+ * Lightning Calendar Core - Main entry point
  * A modern, lightweight, framework-agnostic calendar library
  * Optimized for Salesforce Lightning and Locker Service
  */
