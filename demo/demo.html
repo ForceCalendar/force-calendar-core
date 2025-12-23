@@ -3,147 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Calendar Core - Demo</title>
+    <title>Lightning Calendar Core - Interactive Demo</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .demo-controls {
-            background: #f8f8f8;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 15px 20px;
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .control-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .control-group label {
-            font-weight: 500;
-            color: #333;
-        }
-
-        select, button {
-            padding: 5px 10px;
-            border: 1px solid #ddd;
-            background: white;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #f5f5f5;
-        }
-
-        button.active {
-            background: #0066cc;
-            color: white;
-        }
-
-        .timezone-display {
-            background: #333;
-            color: white;
-            padding: 5px 10px;
-            font-family: monospace;
-            font-size: 13px;
-        }
-
-        .demo-container {
-            max-width: 1400px;
-            margin: 20px auto;
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
-            padding: 0 20px;
-        }
-
-        .info-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .panel-section {
-            border: 1px solid #e0e0e0;
-            background: white;
-            padding: 15px;
-        }
-
-        .panel-section h3 {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #666;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 5px;
-        }
-
-        .stats {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .stats dt {
-            font-weight: 500;
-            color: #666;
-            font-size: 12px;
-        }
-
-        .stats dd {
-            margin: 0 0 10px 0;
-            font-size: 20px;
-            color: #333;
-        }
-
-        .event-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .form-group label {
-            font-size: 11px;
-            color: #666;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 5px;
-            border: 1px solid #ddd;
-            font-size: 13px;
-        }
-
-        .conflict-list {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .conflict-item {
-            padding: 8px;
-            margin-bottom: 5px;
-            background: #fff3cd;
-            border-left: 3px solid #ffc107;
-        }
-
-        @media (max-width: 1024px) {
-            .demo-container {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="page">
@@ -158,9 +19,9 @@
         </header>
 
         <div class="demo-controls">
-            <div class="control-group">
+            <div class="control-row">
                 <label>Timezone:</label>
-                <select id="timezoneSelect">
+                <select id="timezoneSelect" aria-label="Select timezone">
                     <option value="America/New_York">America/New_York</option>
                     <option value="America/Chicago">America/Chicago</option>
                     <option value="America/Los_Angeles">America/Los_Angeles</option>
@@ -171,31 +32,31 @@
                     <option value="Australia/Sydney">Australia/Sydney</option>
                     <option value="UTC">UTC</option>
                 </select>
-                <span id="currentTime" class="timezone-display"></span>
+                <span id="currentTime" class="timezone-display" aria-live="polite"></span>
             </div>
 
-            <div class="control-group">
+            <div class="control-row">
                 <label>View:</label>
-                <button class="active" data-view="month">Month</button>
-                <button data-view="week">Week</button>
-                <button data-view="day">Day</button>
-                <button data-view="list">List</button>
+                <button class="btn active" data-view="month" aria-pressed="true">Month</button>
+                <button class="btn" data-view="week" aria-pressed="false">Week</button>
+                <button class="btn" data-view="day" aria-pressed="false">Day</button>
+                <button class="btn" data-view="list" aria-pressed="false">List</button>
             </div>
 
-            <div class="control-group">
-                <button id="prevBtn">Previous</button>
-                <button id="todayBtn">Today</button>
-                <button id="nextBtn">Next</button>
+            <div class="control-row">
+                <button class="btn" id="prevBtn" aria-label="Previous period">Previous</button>
+                <button class="btn" id="todayBtn" aria-label="Go to today">Today</button>
+                <button class="btn" id="nextBtn" aria-label="Next period">Next</button>
             </div>
 
-            <div class="control-group">
-                <button id="detectConflictsBtn">Detect Conflicts</button>
-                <button id="clearBtn">Clear All</button>
+            <div class="control-row">
+                <button class="btn" id="detectConflictsBtn">Detect Conflicts</button>
+                <button class="btn" id="clearBtn">Clear All</button>
             </div>
         </div>
 
         <div class="demo-container">
-            <div id="calendar" class="calendar-container">
+            <div id="calendar" class="calendar-container" role="application" aria-label="Calendar">
                 <!-- Calendar renders here -->
             </div>
 
@@ -204,23 +65,23 @@
                     <h3>Quick Add Event</h3>
                     <form class="event-form" id="eventForm">
                         <div class="form-group">
-                            <label>Title</label>
+                            <label for="eventTitle">Title</label>
                             <input type="text" id="eventTitle" required>
                         </div>
                         <div class="form-group">
-                            <label>Date</label>
+                            <label for="eventDate">Date</label>
                             <input type="date" id="eventDate" required>
                         </div>
                         <div class="form-group">
-                            <label>Start Time</label>
+                            <label for="startTime">Start Time</label>
                             <input type="time" id="startTime" value="09:00" required>
                         </div>
                         <div class="form-group">
-                            <label>End Time</label>
+                            <label for="endTime">End Time</label>
                             <input type="time" id="endTime" value="10:00" required>
                         </div>
                         <div class="form-group">
-                            <label>Timezone</label>
+                            <label for="eventTz">Timezone</label>
                             <select id="eventTz">
                                 <option value="America/New_York">New York</option>
                                 <option value="America/Los_Angeles">Los Angeles</option>
@@ -235,7 +96,7 @@
                 <div class="panel-section">
                     <h3>Conflicts</h3>
                     <div id="conflictInfo" class="conflict-list">
-                        <p style="color: #999;">No conflicts detected</p>
+                        <p class="muted">No conflicts detected</p>
                     </div>
                 </div>
 
@@ -260,7 +121,6 @@
     </div>
 
     <script type="module">
-        // Use the existing demo.js structure but simplified
         class CalendarDemo {
             constructor() {
                 this.events = [];
@@ -281,24 +141,25 @@
             }
 
             setupEventListeners() {
-                // Timezone selector
                 document.getElementById('timezoneSelect').addEventListener('change', (e) => {
                     this.currentTimezone = e.target.value;
                     this.render();
                     this.updateTime();
                 });
 
-                // View buttons
                 document.querySelectorAll('[data-view]').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
+                        document.querySelectorAll('[data-view]').forEach(b => {
+                            b.classList.remove('active');
+                            b.setAttribute('aria-pressed', 'false');
+                        });
                         e.target.classList.add('active');
+                        e.target.setAttribute('aria-pressed', 'true');
                         this.currentView = e.target.dataset.view;
                         this.render();
                     });
                 });
 
-                // Navigation
                 document.getElementById('prevBtn').addEventListener('click', () => this.navigate(-1));
                 document.getElementById('todayBtn').addEventListener('click', () => {
                     this.currentDate = new Date();
@@ -306,21 +167,33 @@
                 });
                 document.getElementById('nextBtn').addEventListener('click', () => this.navigate(1));
 
-                // Actions
                 document.getElementById('detectConflictsBtn').addEventListener('click', () => this.detectConflicts());
                 document.getElementById('clearBtn').addEventListener('click', () => {
-                    this.events = [];
-                    this.render();
+                    if (confirm('Clear all events?')) {
+                        this.events = [];
+                        this.render();
+                    }
                 });
 
-                // Event form
                 document.getElementById('eventForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.addEventFromForm();
                 });
 
-                // Set today as default date
                 document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.matches('input, select, button')) return;
+
+                    if (e.key === 'ArrowLeft') {
+                        this.navigate(-1);
+                    } else if (e.key === 'ArrowRight') {
+                        this.navigate(1);
+                    } else if (e.key === 't') {
+                        this.currentDate = new Date();
+                        this.render();
+                    }
+                });
             }
 
             loadSampleEvents() {
@@ -359,10 +232,9 @@
                     }
                 ];
 
-                // Add some recurring weekly events
                 for (let week = 0; week < 4; week++) {
                     const date = new Date(today);
-                    date.setDate(date.getDate() + (week * 7) + 1); // Tuesday
+                    date.setDate(date.getDate() + (week * 7) + 1);
                     this.events.push({
                         id: this.eventIdCounter++,
                         title: 'Weekly Sync',
@@ -427,7 +299,7 @@
 
                 const container = document.getElementById('conflictInfo');
                 if (conflicts.length === 0) {
-                    container.innerHTML = '<p style="color: #999;">No conflicts detected</p>';
+                    container.innerHTML = '<p class="muted">No conflicts detected</p>';
                 } else {
                     container.innerHTML = conflicts.map(c =>
                         `<div class="conflict-item">${c.e1.title} conflicts with ${c.e2.title}</div>`
@@ -510,13 +382,19 @@
                     date.setDate(startDate.getDate() + i);
                     const isToday = date.toDateString() === new Date().toDateString();
                     const isOtherMonth = date.getMonth() !== month;
+                    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
                     const dayEvents = this.getEventsForDate(date);
 
+                    let classes = 'calendar-day';
+                    if (isToday) classes += ' today';
+                    if (isOtherMonth) classes += ' other-month';
+                    if (isWeekend && !isOtherMonth) classes += ' weekend';
+
                     html += `
-                        <div class="calendar-day ${isToday ? 'today' : ''} ${isOtherMonth ? 'other-month' : ''}">
+                        <div class="${classes}">
                             <div class="day-number">${date.getDate()}</div>
                             ${dayEvents.slice(0, 3).map(e => `
-                                <div class="calendar-event" title="${e.title} (${e.timezone})">
+                                <div class="calendar-event" title="${e.title} (${e.timezone})" tabindex="0">
                                     ${this.formatTime(e.start)} ${e.title}
                                 </div>
                             `).join('')}
@@ -533,19 +411,21 @@
                 const startOfWeek = new Date(this.currentDate);
                 startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
 
-                let html = `<div class="week-view">`;
+                let html = '<div class="week-view">';
 
                 for (let i = 0; i < 7; i++) {
                     const date = new Date(startOfWeek);
                     date.setDate(startOfWeek.getDate() + i);
                     const dayEvents = this.getEventsForDate(date);
+                    const isToday = date.toDateString() === new Date().toDateString();
 
                     html += `
-                        <div class="week-day">
+                        <div class="week-day ${isToday ? 'today' : ''}">
                             <h4>${date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</h4>
                             ${dayEvents.map(e => `
-                                <div class="calendar-event">
-                                    ${this.formatTime(e.start)} - ${e.title}
+                                <div class="calendar-event" tabindex="0">
+                                    <div>${this.formatTime(e.start)}</div>
+                                    <div>${e.title}</div>
                                 </div>
                             `).join('')}
                         </div>
@@ -566,15 +446,15 @@
                         </div>
                 `;
 
-                for (let hour = 8; hour <= 18; hour++) {
+                for (let hour = 6; hour <= 20; hour++) {
                     const hourEvents = dayEvents.filter(e => e.start.getHours() === hour);
                     html += `
                         <div class="hour-slot">
-                            <div class="hour-time">${hour}:00</div>
+                            <div class="hour-time">${String(hour).padStart(2, '0')}:00</div>
                             <div>
                                 ${hourEvents.map(e => `
-                                    <div class="calendar-event">
-                                        ${e.title}
+                                    <div class="calendar-event" tabindex="0">
+                                        ${e.title} (${this.formatTime(e.start)} - ${this.formatTime(e.end)})
                                     </div>
                                 `).join('')}
                             </div>
@@ -591,7 +471,7 @@
 
                 let html = `
                     <div class="list-view">
-                        <div class="calendar-header">All Events</div>
+                        <div class="calendar-header">All Events (${sortedEvents.length})</div>
                 `;
 
                 let currentDate = null;
@@ -599,19 +479,20 @@
                     const dateStr = event.start.toDateString();
                     if (dateStr !== currentDate) {
                         currentDate = dateStr;
-                        html += `<h4 style="margin: 15px 0 5px 0; padding: 5px; background: #f5f5f5;">
-                            ${event.start.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                        </h4>`;
+                        html += `<div class="list-day">
+                            <h4>${event.start.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h4>
+                        `;
                     }
                     html += `
-                        <div class="calendar-event list-item">
+                        <div class="calendar-event list-item" tabindex="0">
                             <span class="event-time">${this.formatTime(event.start)}</span>
                             ${event.title}
-                            <span style="color: #666; font-size: 11px;">(${event.timezone})</span>
+                            <span class="muted">${event.timezone}</span>
                         </div>
                     `;
                 });
 
+                if (currentDate) html += '</div>';
                 html += '</div>';
                 container.innerHTML = html;
             }
@@ -631,7 +512,6 @@
             }
         }
 
-        // Initialize
         new CalendarDemo();
     </script>
 </body>
