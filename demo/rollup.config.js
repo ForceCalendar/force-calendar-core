@@ -86,7 +86,7 @@ export default {
                             // Update paths for production
                             return content
                                 .replace(/js\/app\.js/g, 'demo.min.js')
-                                .replace(/css\//g, 'dist/css/')
+                                .replace(/\.\/css\//g, 'css/')
                                 .replace(/<!--dev-->/g, '<!--')
                                 .replace(/<!--\/dev-->/g, '-->');
                         }
@@ -98,7 +98,7 @@ export default {
     ],
     external: [
         // Keep calendar-core external since it's already built
-        /^\.\.\/dist\/calendar-core/
+        './calendar-core.esm.js'
     ],
     watch: {
         clearScreen: false,

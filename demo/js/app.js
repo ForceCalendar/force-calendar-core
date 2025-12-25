@@ -3,7 +3,7 @@
  * Initializes the Lightning Calendar Demo with all safety features
  */
 
-import { Calendar, Event, EventStore } from '../dist/calendar-core.esm.js';
+import { Calendar, Event, EventStore } from './calendar-core.esm.js';
 import ConsoleInterface from './ConsoleInterface.js';
 import ErrorHandler from './ErrorHandler.js';
 import StateManager from './StateManager.js';
