@@ -140,3 +140,6 @@ const mockSubscription = {
 mockSubscription.simulateRefresh();
 
 console.log('\n✅ ICS functionality test complete!');
+
+// Exit cleanly after async operations
+process.exit(0);
