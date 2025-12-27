@@ -28,11 +28,23 @@ console.log('  category still present?:', 'category' in normalized);
 
 // Create an Event with it
 console.log('\nCreating Event...');
+console.log('Test data being passed:', testData);
 try {
     const event = new Event(testData);
     console.log('Event created successfully');
     console.log('  event.categories:', event.categories);
     console.log('  event.category (getter):', event.category);
+
+    // Test with categories array directly
+    console.log('\nTesting with categories array...');
+    const event2 = new Event({
+        ...testData,
+        categories: ['meeting', 'important']
+    });
+    console.log('  event2.categories:', event2.categories);
+    console.log('  event2.category (getter):', event2.category);
 } catch (error) {
     console.error('Error creating event:', error.message);
 }
+
+process.exit(0);

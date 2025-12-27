@@ -295,8 +295,8 @@ export class TimezoneManager {
         const offsetHours = -offset / 60;
 
         // Try to match offset to known timezone
-        for (const [tz, tzOffset] of Object.entries(this.timezoneOffsets)) {
-            if (tzOffset === offsetHours) {
+        for (const [tz, tzData] of Object.entries(this.database.timezones)) {
+            if (tzData.offset / 60 === offsetHours) {
                 return tz;
             }
         }
@@ -313,14 +313,14 @@ export class TimezoneManager {
         if (!tzString) return 'UTC';
 
         // Check if it's already an IANA identifier
-        if (this.timezoneOffsets.hasOwnProperty(tzString)) {
+        if (this.database.timezones.hasOwnProperty(tzString)) {
             return tzString;
         }
 
         // Check abbreviations
         const upperTz = tzString.toUpperCase();
-        if (this.timezoneAbbreviations.hasOwnProperty(upperTz)) {
-            return this.timezoneAbbreviations[upperTz];
+        if (this.database.abbreviations && this.database.abbreviations.hasOwnProperty(upperTz)) {
+            return this.database.abbreviations[upperTz];
         }
 
         // Try to parse offset format (e.g., "+05:30", "-08:00")
@@ -332,8 +332,8 @@ export class TimezoneManager {
             const totalOffset = sign * (hours + minutes / 60);
 
             // Find matching timezone
-            for (const [tz, offset] of Object.entries(this.timezoneOffsets)) {
-                if (offset === totalOffset) {
+            for (const [tz, tzData] of Object.entries(this.database.timezones)) {
+                if (tzData.offset / 60 === totalOffset) {
                     return tz;
                 }
             }

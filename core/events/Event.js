@@ -178,10 +178,12 @@ export class Event {
     organizer = null,
     attendees = [],
     reminders = [],
-    categories = [],
+    category,  // Support singular category (no default)
+    categories,  // Support plural categories (no default)
     attachments = [],
     conferenceData = null,
-    metadata = {}
+    metadata = {},
+    ...rest  // Capture any extra properties
   }) {
     // Normalize and validate input
     const normalized = Event.normalize({
@@ -205,10 +207,12 @@ export class Event {
       organizer,
       attendees,
       reminders,
-      categories,
+      category,  // Pass category to normalize
+      categories,  // Pass categories to normalize
       attachments,
       conferenceData,
-      metadata
+      metadata,
+      ...rest  // Pass any extra properties
     });
 
     // Validate normalized data
@@ -262,7 +266,7 @@ export class Event {
     this.reminders = [...normalized.reminders];
 
     // Categories/Tags
-    this.categories = [...normalized.categories];
+    this.categories = normalized.categories ? [...normalized.categories] : [];
 
     // Attachments
     this.attachments = [...normalized.attachments];

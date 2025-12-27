@@ -241,4 +241,4 @@ results.forEach(event => {
     console.log(`  - ${event.title} (${event.recurrence})`);
 });
 
-console.log('\n✅ Search and Filter functionality test complete!');
+console.log('\n✅ Search and Filter functionality test complete!');process.exit(0);

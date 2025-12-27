@@ -178,3 +178,4 @@ console.log('• DST transitions handled automatically');
 console.log('• Fast timezone conversions with caching');
 console.log('• Support for all major IANA timezones');
 console.log('• Critical for global Salesforce deployments');
+process.exit(0);

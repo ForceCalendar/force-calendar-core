@@ -50,3 +50,5 @@ if (allEvents.length > 0) {
     console.log('  First event category:', firstEvent.category);
     console.log('  First event categories:', firstEvent.categories);
 }
+
+process.exit(0);
