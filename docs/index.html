@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Force Calendar Core - The invisible engine that makes calendars work. Fast, reliable, and works everywhere.">
-    <title>Force Calendar Core | The Calendar Engine</title>
+    <meta name="description" content="forceCalendarCore - A new approach to calendar engines. Completely separated from UI. Built for enterprise platforms like Salesforce.">
+    <title>forceCalendarCore | The Separated Calendar Engine</title>
     <style>
         :root {
             --dark: #1a1a1a;
@@ -14,7 +14,9 @@
             --accent: #e0e0e0;
             --code-bg: #0a0a0a;
             --border: #2a2a2a;
+            --warning: #fbbf24;
             --success: #4ade80;
+            --error: #f87171;
         }
 
         * {
@@ -107,7 +109,7 @@
         /* Hero Section */
         .hero {
             margin-top: 80px;
-            padding: 6rem 2rem 4rem;
+            padding: 6rem 2rem 3rem;
             background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 100%);
         }
 
@@ -117,7 +119,7 @@
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 200;
             line-height: 1.2;
             margin-bottom: 1.5rem;
@@ -129,11 +131,44 @@
         }
 
         .hero-subtitle {
-            font-size: 1.375rem;
+            font-size: 1.25rem;
             color: var(--accent);
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             max-width: 700px;
             line-height: 1.8;
+        }
+
+        /* New Project Notice */
+        .new-notice {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            display: inline-block;
+        }
+
+        .new-notice-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .new-badge {
+            background: var(--warning);
+            color: var(--dark);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .new-notice p {
+            color: var(--gray);
+            font-size: 0.875rem;
+            line-height: 1.6;
         }
 
         /* Main Content */
@@ -143,210 +178,236 @@
             padding: 2rem;
         }
 
-        /* Engine Analogy Section */
-        .engine-section {
-            background: var(--dark);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 4rem;
+        /* Philosophy Section */
+        .philosophy-section {
             margin: 4rem 0;
+            padding: 3rem;
+            background: var(--dark);
+            border-radius: 3px;
+            border: 1px solid var(--border);
+        }
+
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .philosophy-item {
             text-align: center;
         }
 
-        .engine-visual {
-            max-width: 800px;
-            margin: 0 auto 3rem;
+        .philosophy-number {
+            font-size: 2.5rem;
+            font-weight: 200;
+            color: var(--border);
+            margin-bottom: 1rem;
+            font-family: Georgia, serif;
         }
 
-        .car-diagram {
+        .philosophy-item h3 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .philosophy-item p {
+            font-size: 0.875rem;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* Why Another Calendar Section */
+        .why-section {
+            margin: 6rem 0;
+        }
+
+        .comparison-table {
+            background: var(--dark);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .comparison-row {
             display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 2rem;
-            align-items: center;
-            margin: 3rem 0;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid var(--border);
         }
 
-        .engine-box {
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-cell {
+            padding: 2rem;
+        }
+
+        .comparison-cell:first-child {
+            border-right: 1px solid var(--border);
+        }
+
+        .comparison-header {
             background: var(--code-bg);
-            border: 2px solid var(--border);
-            padding: 2rem;
-            border-radius: 3px;
-            position: relative;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+            padding: 1.5rem 2rem;
         }
 
-        .engine-box::after {
-            content: "ENGINE";
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: var(--dark);
-            padding: 0 10px;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
+        .comparison-title {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .comparison-desc {
+            font-size: 0.875rem;
             color: var(--gray);
+            line-height: 1.6;
         }
 
-        .interface-box {
-            background: transparent;
-            border: 2px dashed var(--border);
-            padding: 2rem;
-            border-radius: 3px;
-            position: relative;
-        }
-
-        .interface-box::after {
-            content: "YOUR INTERFACE";
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: var(--dark);
-            padding: 0 10px;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            color: var(--gray);
-        }
-
-        /* Problem/Solution Grid */
+        /* Problems Section - Redesigned */
         .problems-section {
             margin: 6rem 0;
         }
 
-        .problem-grid {
+        .problem-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+            gap: 1.5rem;
         }
 
-        .problem-card {
+        .problem-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
             background: var(--dark);
-            border: 1px solid var(--border);
             border-radius: 3px;
             overflow: hidden;
+            border: 1px solid var(--border);
         }
 
-        .problem-header {
-            background: #2a1a1a;
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .problem-header h3 {
-            font-size: 1.125rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-            color: #ff6b6b;
-        }
-
-        .problem-header p {
-            font-size: 0.875rem;
-            color: var(--gray);
-        }
-
-        .solution-body {
-            padding: 1.5rem;
-        }
-
-        .solution-body h4 {
-            font-size: 1.125rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-            color: var(--success);
-        }
-
-        .solution-body p {
-            font-size: 0.875rem;
-            color: var(--accent);
-            line-height: 1.6;
-        }
-
-        /* Visual Explanation */
-        .visual-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin: 4rem 0;
-            text-align: center;
-        }
-
-        .visual-card {
+        .problem-side {
             padding: 2rem;
+            background: #1a0f0f;
+            border-right: 1px solid var(--border);
         }
 
-        .visual-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .solution-side {
+            padding: 2rem;
+            background: var(--dark);
+        }
+
+        .problem-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--error);
+            margin-bottom: 0.75rem;
             opacity: 0.8;
         }
 
-        .visual-card h3 {
-            font-size: 1.125rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
+        .solution-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--success);
+            margin-bottom: 0.75rem;
+            opacity: 0.8;
         }
 
-        .visual-card p {
+        .problem-title {
+            font-size: 1.125rem;
+            margin-bottom: 0.75rem;
+            color: var(--light);
+        }
+
+        .problem-desc {
             font-size: 0.875rem;
             color: var(--gray);
+            line-height: 1.6;
         }
 
-        /* How It Works - Simple */
-        .how-it-works {
-            background: var(--dark);
-            border-radius: 3px;
-            padding: 4rem;
-            margin: 4rem 0;
+        /* Who Needs This Section */
+        .target-section {
+            margin: 6rem 0;
+            text-align: center;
         }
 
-        .process-flow {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
-            margin: 3rem 0;
-            flex-wrap: wrap;
+            margin-top: 3rem;
+            text-align: left;
         }
 
-        .process-step {
+        .target-card {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 3px;
+        }
+
+        .target-card h3 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .target-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .target-card li {
+            padding: 0.5rem 0;
+            color: var(--gray);
+            font-size: 0.875rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .target-card li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--border);
+        }
+
+        /* Architecture Diagram */
+        .architecture-visual {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 3rem;
+            margin: 3rem 0;
+        }
+
+        .arch-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .arch-layer {
             background: var(--code-bg);
             border: 1px solid var(--border);
             padding: 1.5rem;
             border-radius: 3px;
-            flex: 1;
-            min-width: 200px;
             text-align: center;
         }
 
-        .process-arrow {
-            color: var(--border);
-            font-size: 1.5rem;
-        }
-
-        /* Use Cases */
-        .use-cases {
-            margin: 6rem 0;
-        }
-
-        .use-case-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .use-case {
-            background: var(--dark);
-            border: 1px solid var(--border);
-            padding: 1.5rem;
-            border-radius: 3px;
-        }
-
-        .use-case h4 {
-            font-weight: 400;
+        .arch-layer-title {
+            font-weight: 500;
             margin-bottom: 0.5rem;
         }
 
-        .use-case p {
+        .arch-layer-desc {
             font-size: 0.875rem;
             color: var(--gray);
         }
@@ -358,6 +419,43 @@
             background: var(--dark);
             border-radius: 3px;
             margin: 4rem 0;
+        }
+
+        /* Install Section */
+        .install-section {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .install-command {
+            font-family: 'SF Mono', Monaco, 'Inconsolata', 'Fira Code', monospace;
+            font-size: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .copy-btn {
+            background: var(--border);
+            border: none;
+            color: var(--gray);
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--light);
+            color: var(--dark);
         }
 
         .cta-buttons {
@@ -403,43 +501,6 @@
             border-color: var(--light);
         }
 
-        /* Install Section */
-        .install-section {
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 1.5rem;
-            margin: 2rem auto;
-            max-width: 600px;
-        }
-
-        .install-command {
-            font-family: 'SF Mono', Monaco, 'Inconsolata', 'Fira Code', monospace;
-            font-size: 1rem;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .copy-btn {
-            background: var(--border);
-            border: none;
-            color: var(--gray);
-            padding: 0.5rem 1rem;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s;
-        }
-
-        .copy-btn:hover {
-            background: var(--light);
-            color: var(--dark);
-        }
-
         /* Section Headers */
         .section-header {
             text-align: center;
@@ -456,7 +517,7 @@
         .section-header p {
             font-size: 1.125rem;
             color: var(--gray);
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
         }
 
@@ -491,23 +552,37 @@
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
 
-            .car-diagram {
+            .philosophy-grid {
                 grid-template-columns: 1fr;
             }
 
-            .visual-grid {
+            .comparison-row {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-cell:first-child {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .problem-item {
+                grid-template-columns: 1fr;
+            }
+
+            .problem-side {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .target-grid {
                 grid-template-columns: 1fr;
             }
 
             .nav-links {
                 display: none;
-            }
-
-            .engine-section {
-                padding: 2rem;
             }
         }
     </style>
@@ -516,13 +591,14 @@
     <header>
         <nav>
             <div class="logo">
-                <em>force</em><strong>Calendar</strong>
+                <em>force</em><strong>Calendar</strong>Core
             </div>
             <div class="nav-links">
-                <a href="#how">How It Works</a>
-                <a href="#problems">Problems Solved</a>
-                <a href="#uses">Use Cases</a>
-                <a href="technical.html">Technical Docs</a>
+                <a href="#why">Why Another</a>
+                <a href="#philosophy">Philosophy</a>
+                <a href="#problems">Problems</a>
+                <a href="#who">Who Needs This</a>
+                <a href="technical.html">Technical</a>
                 <a href="https://github.com/ForceCalendar/force-calendar-core">GitHub</a>
                 <span class="version-badge" id="version">v0.3.0</span>
             </div>
@@ -531,50 +607,172 @@
 
     <section class="hero">
         <div class="hero-content">
-            <h1>The <strong>Calendar Engine</strong></h1>
+            <h1><strong>forceCalendarCore</strong></h1>
             <p class="hero-subtitle">
-                Think of it as the engine in your car. You never see it, but it makes everything work.
-                Force Calendar Core is the invisible powerhouse that handles all the complex calendar math,
-                so you can focus on building beautiful interfaces.
+                Yes, there are hundreds of calendar libraries. Here's why we built another one:
+                Complete separation between calendar logic and UI. Built specifically for enterprise
+                platforms like Salesforce where you can't touch the DOM.
             </p>
+
+            <div class="new-notice">
+                <div class="new-notice-header">
+                    <span class="new-badge">New Project</span>
+                    <span style="color: var(--accent); font-size: 0.875rem;">Early Stage • 0 Downloads • Fresh Perspective</span>
+                </div>
+                <p>
+                    This is brand new. No legacy code. No backwards compatibility issues.
+                    Built from scratch in 2024 with modern JavaScript and enterprise requirements in mind.
+                    If you need a proven solution with thousands of users, this isn't it yet.
+                    If you need something built specifically for your use case, keep reading.
+                </p>
+            </div>
         </div>
     </section>
 
     <div class="content">
-        <!-- Engine Analogy -->
+        <!-- Why Another Calendar -->
+        <section class="why-section" id="why">
+            <div class="section-header">
+                <h2>Why Build Another Calendar?</h2>
+                <p>Because most calendars weren't built for modern enterprise constraints</p>
+            </div>
+
+            <div class="comparison-table">
+                <div class="comparison-row">
+                    <div class="comparison-cell comparison-header">
+                        Traditional Calendar Libraries
+                    </div>
+                    <div class="comparison-cell comparison-header">
+                        forceCalendarCore
+                    </div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">
+                        <div class="comparison-title">Everything bundled together</div>
+                        <div class="comparison-desc">
+                            UI components, styling, and logic all mixed. Take it or leave it.
+                        </div>
+                    </div>
+                    <div class="comparison-cell">
+                        <div class="comparison-title">Pure computation engine</div>
+                        <div class="comparison-desc">
+                            Just the math and logic. Build any UI you want, or no UI at all.
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">
+                        <div class="comparison-title">DOM manipulation required</div>
+                        <div class="comparison-desc">
+                            Direct DOM access means it breaks in Salesforce Locker Service and similar sandboxes.
+                        </div>
+                    </div>
+                    <div class="comparison-cell">
+                        <div class="comparison-title">Zero DOM dependencies</div>
+                        <div class="comparison-desc">
+                            Pure JavaScript. Works in Salesforce, Service Workers, Node.js, anywhere.
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">
+                        <div class="comparison-title">Opinionated about everything</div>
+                        <div class="comparison-desc">
+                            Forced to use their event format, their storage, their way.
+                        </div>
+                    </div>
+                    <div class="comparison-cell">
+                        <div class="comparison-title">Bring your own everything</div>
+                        <div class="comparison-desc">
+                            Your database, your event format, your storage. We just do the calendar math.
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">
+                        <div class="comparison-title">Years of legacy code</div>
+                        <div class="comparison-desc">
+                            Supporting IE11, jQuery, deprecated APIs. Thousands of lines you don't need.
+                        </div>
+                    </div>
+                    <div class="comparison-cell">
+                        <div class="comparison-title">Started fresh in 2024</div>
+                        <div class="comparison-desc">
+                            Modern JavaScript only. ES6 modules. No legacy. Clean and minimal.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Philosophy -->
+        <section class="philosophy-section" id="philosophy">
+            <div class="section-header">
+                <h2>The Separation Philosophy</h2>
+                <p>Three independent layers that work together</p>
+            </div>
+
+            <div class="philosophy-grid">
+                <div class="philosophy-item">
+                    <div class="philosophy-number">1</div>
+                    <h3>Calendar Engine</h3>
+                    <p>
+                        Pure computation. Time zones, recurrence rules, conflict detection.
+                        No UI, no framework, no opinions about display.
+                    </p>
+                </div>
+                <div class="philosophy-item">
+                    <div class="philosophy-number">2</div>
+                    <h3>UI Components</h3>
+                    <p>
+                        Your choice. React, Vue, Lightning Web Components, or vanilla JS.
+                        The engine doesn't care how you display the data.
+                    </p>
+                </div>
+                <div class="philosophy-item">
+                    <div class="philosophy-number">3</div>
+                    <h3>Platform Integration</h3>
+                    <p>
+                        Salesforce, SharePoint, or your custom platform.
+                        Each with its own specific requirements and constraints.
+                    </p>
+                </div>
+            </div>
+
+            <p style="text-align: center; margin-top: 2rem; color: var(--gray);">
+                This separation means you can swap any layer without touching the others.
+                Need a different UI? Keep the engine. Moving from Salesforce to Azure? Keep everything else.
+            </p>
+        </section>
+
+        <!-- What Is forceCalendarCore -->
         <section class="engine-section">
             <div class="section-header">
-                <h2>What Is Force Calendar Core?</h2>
-                <p>It's the part nobody sees, but everybody needs</p>
+                <h2>What Is forceCalendarCore?</h2>
+                <p>It's the math department of your calendar application</p>
             </div>
 
-            <div class="car-diagram">
-                <div class="engine-box">
-                    <h3 style="margin-bottom: 1rem; font-weight: 400;">Force Calendar Core</h3>
-                    <p style="font-size: 0.875rem; color: var(--gray); line-height: 1.8;">
-                        Handles time zones<br>
-                        Stores events<br>
-                        Calculates dates<br>
-                        Finds conflicts<br>
-                        Manages recurrence
-                    </p>
-                </div>
-                <div class="interface-box">
-                    <h3 style="margin-bottom: 1rem; font-weight: 400;">What You Build</h3>
-                    <p style="font-size: 0.875rem; color: var(--gray); line-height: 1.8;">
-                        Beautiful calendars<br>
-                        Scheduling apps<br>
-                        Booking systems<br>
-                        Time trackers<br>
-                        Any UI you want
-                    </p>
+            <div class="architecture-visual">
+                <div class="arch-stack">
+                    <div class="arch-layer">
+                        <div class="arch-layer-title">Your Application</div>
+                        <div class="arch-layer-desc">Salesforce LWC, React App, API Server, etc.</div>
+                    </div>
+                    <div class="arch-layer" style="border: 2px solid var(--accent);">
+                        <div class="arch-layer-title">forceCalendarCore</div>
+                        <div class="arch-layer-desc">Handles all calendar computations</div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-layer-title">Your Data</div>
+                        <div class="arch-layer-desc">Database, API, Local Storage, wherever</div>
+                    </div>
                 </div>
             </div>
 
-            <p style="margin-top: 2rem; font-size: 1.125rem; color: var(--accent);">
-                Just like a car engine does all the hard work (combustion, pistons, timing),
-                Force Calendar Core does all the calendar work (time math, event storage, conflict detection).
-                You just build the dashboard.
+            <p style="text-align: center; margin-top: 2rem; font-size: 1.125rem; color: var(--accent);">
+                Ask it "what events are on Tuesday?" and it tells you.<br>
+                Ask it "does this conflict?" and it checks.<br>
+                That's it. No UI. No storage. Just answers.
             </p>
         </section>
 
@@ -582,193 +780,138 @@
         <section class="problems-section" id="problems">
             <div class="section-header">
                 <h2>Real Problems, Real Solutions</h2>
-                <p>Common calendar headaches and how we solve them</p>
+                <p>Specific issues we solve that others don't</p>
             </div>
 
-            <div class="problem-grid">
-                <div class="problem-card">
-                    <div class="problem-header">
-                        <h3>The Problem</h3>
-                        <p>"My calendar takes forever to load"</p>
+            <div class="problem-container">
+                <div class="problem-item">
+                    <div class="problem-side">
+                        <div class="problem-label">Problem</div>
+                        <div class="problem-title">Salesforce Locker Service blocks DOM access</div>
+                        <div class="problem-desc">
+                            Most calendar libraries fail immediately in Salesforce because they try to
+                            manipulate the DOM directly. Locker Service blocks this for security.
+                        </div>
                     </div>
-                    <div class="solution-body">
-                        <h4>Our Solution</h4>
-                        <p>We use the same technology that maps use to find locations instantly.
-                        Whether you have 10 events or 10,000, finding today's events takes the same
-                        tiny fraction of a second.</p>
-                    </div>
-                </div>
-
-                <div class="problem-card">
-                    <div class="problem-header">
-                        <h3>The Problem</h3>
-                        <p>"Time zones are a nightmare"</p>
-                    </div>
-                    <div class="solution-body">
-                        <h4>Our Solution</h4>
-                        <p>We handle all 387 time zones automatically. Schedule a meeting in New York,
-                        view it in Tokyo - it just works. Daylight saving time? Handled.
-                        Historical timezone changes? We got it.</p>
+                    <div class="solution-side">
+                        <div class="solution-label">Solution</div>
+                        <div class="problem-title">Zero DOM dependencies</div>
+                        <div class="problem-desc">
+                            We never touch the DOM. Pure JavaScript computation only.
+                            You control all the rendering in your Lightning Web Component.
+                        </div>
                     </div>
                 </div>
 
-                <div class="problem-card">
-                    <div class="problem-header">
-                        <h3>The Problem</h3>
-                        <p>"Double bookings keep happening"</p>
+                <div class="problem-item">
+                    <div class="problem-side">
+                        <div class="problem-label">Problem</div>
+                        <div class="problem-title">Enterprise data stays in enterprise systems</div>
+                        <div class="problem-desc">
+                            You can't send calendar data to external services. Everything must stay
+                            within your secure environment.
+                        </div>
                     </div>
-                    <div class="solution-body">
-                        <h4>Our Solution</h4>
-                        <p>Before any event is saved, we instantly check for conflicts.
-                        It's like having a personal assistant that never sleeps and never
-                        makes mistakes.</p>
-                    </div>
-                </div>
-
-                <div class="problem-card">
-                    <div class="problem-header">
-                        <h3>The Problem</h3>
-                        <p>"Recurring events are broken"</p>
-                    </div>
-                    <div class="solution-body">
-                        <h4>Our Solution</h4>
-                        <p>We speak the same language as Google Calendar and Outlook.
-                        "Every weekday except holidays" or "First Monday of each month" -
-                        we understand it all perfectly.</p>
+                    <div class="solution-side">
+                        <div class="solution-label">Solution</div>
+                        <div class="problem-title">Runs entirely in your environment</div>
+                        <div class="problem-desc">
+                            No external API calls. No cloud services. Everything runs where you deploy it.
+                            Your data never leaves your system.
+                        </div>
                     </div>
                 </div>
 
-                <div class="problem-card">
-                    <div class="problem-header">
-                        <h3>The Problem</h3>
-                        <p>"It doesn't work in Salesforce"</p>
+                <div class="problem-item">
+                    <div class="problem-side">
+                        <div class="problem-label">Problem</div>
+                        <div class="problem-title">Different platforms, different rules</div>
+                        <div class="problem-desc">
+                            SharePoint has different constraints than Salesforce. ServiceNow different
+                            than both. One library can't handle all platforms.
+                        </div>
                     </div>
-                    <div class="solution-body">
-                        <h4>Our Solution</h4>
-                        <p>Built specifically for Salesforce's strict security rules.
-                        No DOM manipulation, no global variables, no security violations.
-                        It just works, everywhere.</p>
+                    <div class="solution-side">
+                        <div class="solution-label">Solution</div>
+                        <div class="problem-title">Platform-agnostic core</div>
+                        <div class="problem-desc">
+                            The engine works everywhere. Build platform-specific UI layers on top.
+                            One engine, many platforms.
+                        </div>
                     </div>
                 </div>
 
-                <div class="problem-card">
-                    <div class="problem-header">
-                        <h3>The Problem</h3>
-                        <p>"Calendar data is locked in"</p>
+                <div class="problem-item">
+                    <div class="problem-side">
+                        <div class="problem-label">Problem</div>
+                        <div class="problem-title">Bundle size matters in enterprise</div>
+                        <div class="problem-desc">
+                            Can't ship 500KB of calendar code. Enterprise apps have strict size limits
+                            and performance requirements.
+                        </div>
                     </div>
-                    <div class="solution-body">
-                        <h4>Our Solution</h4>
-                        <p>Import and export standard .ics files that work with any calendar
-                        system. Your data is never locked in. Move freely between any
-                        calendar application.</p>
+                    <div class="solution-side">
+                        <div class="solution-label">Solution</div>
+                        <div class="problem-title">18KB gzipped core</div>
+                        <div class="problem-desc">
+                            Minimal core with tree-shakeable modules. Import only what you need.
+                            No jQuery, no legacy, no bloat.
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- How It Works - Simple -->
-        <section class="how-it-works" id="how">
+        <!-- Who Needs This -->
+        <section class="target-section" id="who">
             <div class="section-header">
-                <h2>How Does It Work?</h2>
-                <p>Simple: You ask, it answers - instantly</p>
+                <h2>Who Is This For?</h2>
+                <p>Specific teams with specific requirements</p>
             </div>
 
-            <div class="process-flow">
-                <div class="process-step">
-                    <h4>You Ask</h4>
-                    <p style="font-size: 0.875rem; color: var(--gray); margin-top: 0.5rem;">
-                        "What's on my calendar today?"
-                    </p>
+            <div class="target-grid">
+                <div class="target-card">
+                    <h3>You NEED this if you're:</h3>
+                    <ul>
+                        <li>Building Lightning Web Components for Salesforce</li>
+                        <li>Working in sandboxed environments (Locker Service)</li>
+                        <li>Building calendar features for multiple platforms</li>
+                        <li>Need complete control over the UI layer</li>
+                        <li>Required to keep all computation client-side</li>
+                        <li>Building headless calendar APIs</li>
+                        <li>Need to integrate with existing enterprise systems</li>
+                    </ul>
                 </div>
-                <div class="process-arrow">→</div>
-                <div class="process-step">
-                    <h4>Core Processes</h4>
-                    <p style="font-size: 0.875rem; color: var(--gray); margin-top: 0.5rem;">
-                        Checks time zones, finds events, applies recurrence rules
-                    </p>
-                </div>
-                <div class="process-arrow">→</div>
-                <div class="process-step">
-                    <h4>You Get</h4>
-                    <p style="font-size: 0.875rem; color: var(--gray); margin-top: 0.5rem;">
-                        Today's events, instantly, correctly sorted
-                    </p>
+                <div class="target-card">
+                    <h3>You DON'T need this if you're:</h3>
+                    <ul>
+                        <li>Building a simple website with a calendar widget</li>
+                        <li>Want a ready-made calendar with UI included</li>
+                        <li>Need something with years of production testing</li>
+                        <li>Looking for a drop-in calendar component</li>
+                        <li>Don't have enterprise constraints</li>
+                        <li>Need extensive documentation and tutorials</li>
+                        <li>Want community support and plugins</li>
+                    </ul>
                 </div>
             </div>
 
-            <div style="margin-top: 3rem;">
-                <h3 style="font-weight: 400; margin-bottom: 1.5rem;">The Magic Behind Speed</h3>
-                <div class="visual-grid">
-                    <div class="visual-card">
-                        <div class="visual-icon">📍</div>
-                        <h3>Location-Based Storage</h3>
-                        <p>Events are stored by their position in time, like pins on a map.
-                        Finding events for any date is like zooming into a map location.</p>
-                    </div>
-                    <div class="visual-card">
-                        <div class="visual-icon">🗂️</div>
-                        <h3>Smart Indexing</h3>
-                        <p>Like a library catalog system, we know exactly where every event lives.
-                        No searching through everything to find what you need.</p>
-                    </div>
-                    <div class="visual-card">
-                        <div class="visual-icon">💾</div>
-                        <h3>Memory Management</h3>
-                        <p>Keeps frequently used data ready, like keeping your favorite tools
-                        on top of your toolbox. Works fast on phones and servers alike.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Use Cases -->
-        <section class="use-cases" id="uses">
-            <div class="section-header">
-                <h2>Who Uses This?</h2>
-                <p>Teams building calendar features without the calendar headaches</p>
-            </div>
-
-            <div class="use-case-grid">
-                <div class="use-case">
-                    <h4>Salesforce Developers</h4>
-                    <p>Building Lightning components that need calendar functionality
-                    without security violations</p>
-                </div>
-                <div class="use-case">
-                    <h4>SaaS Companies</h4>
-                    <p>Adding scheduling features to their products without
-                    reinventing the wheel</p>
-                </div>
-                <div class="use-case">
-                    <h4>Healthcare Systems</h4>
-                    <p>Managing patient appointments across multiple time zones
-                    with zero conflicts</p>
-                </div>
-                <div class="use-case">
-                    <h4>Education Platforms</h4>
-                    <p>Scheduling classes, managing recurring lectures,
-                    handling semester calendars</p>
-                </div>
-                <div class="use-case">
-                    <h4>Booking Applications</h4>
-                    <p>Hotels, restaurants, services - anywhere that needs
-                    reliable time slot management</p>
-                </div>
-                <div class="use-case">
-                    <h4>Enterprise Tools</h4>
-                    <p>Internal scheduling systems that need to be fast,
-                    reliable, and work everywhere</p>
-                </div>
-            </div>
+            <p style="text-align: center; margin-top: 3rem; padding: 2rem; background: var(--dark); border-radius: 3px; border: 1px solid var(--border);">
+                <strong style="color: var(--accent);">Be honest with yourself:</strong><br>
+                <span style="color: var(--gray);">
+                    If you're building a regular web app, use FullCalendar or DayJS. They're great.<br>
+                    We built this for the specific case where those don't work.
+                </span>
+            </p>
         </section>
 
         <!-- CTA Section -->
         <section class="cta-section">
             <h2 style="font-size: 2rem; font-weight: 200; margin-bottom: 1rem;">
-                Ready to Build Something Great?
+                Want to Try Something New?
             </h2>
             <p style="font-size: 1.125rem; color: var(--gray); margin-bottom: 2rem;">
-                Stop wrestling with time zones and date math. Let the engine handle it.
+                Early adopters shape the future. This is your chance to influence how it develops.
             </p>
 
             <div class="install-section">
@@ -779,25 +922,25 @@
             </div>
 
             <div class="cta-buttons">
-                <a href="https://www.npmjs.com/package/@forcecalendar/core" class="btn btn-primary">
-                    Get Started
-                </a>
-                <a href="https://github.com/ForceCalendar/force-calendar-core" class="btn btn-secondary">
-                    View on GitHub
+                <a href="https://github.com/ForceCalendar/force-calendar-core" class="btn btn-primary">
+                    Explore on GitHub
                 </a>
                 <a href="technical.html" class="btn btn-secondary">
                     Technical Details
                 </a>
+                <a href="https://www.npmjs.com/package/@forcecalendar/core" class="btn btn-secondary">
+                    NPM Package
+                </a>
             </div>
 
             <p style="margin-top: 3rem; font-size: 0.875rem; color: var(--gray);">
-                Trusted by developers who value their time and their users' experience
+                Yes, it's new. Yes, it's unproven. But it solves real problems that existing solutions don't.
             </p>
         </section>
     </div>
 
     <footer>
-        <div>Force Calendar Core</div>
+        <div>forceCalendarCore • Built for enterprise constraints</div>
         <div class="footer-links">
             <a href="https://www.npmjs.com/package/@forcecalendar/core">NPM Package</a>
             <a href="https://github.com/ForceCalendar/force-calendar-core">Source Code</a>
