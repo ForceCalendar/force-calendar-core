@@ -28,7 +28,7 @@ export { RRuleParser } from './events/RRuleParser.js';
 export { EnhancedCalendar } from './integration/EnhancedCalendar.js';
 
 // Version
-export const VERSION = '0.3.1';
+export const VERSION = '0.4.0';
 
 // Default export
 export { Calendar as default } from './calendar/Calendar.js';
