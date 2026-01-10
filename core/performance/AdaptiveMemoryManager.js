@@ -119,9 +119,9 @@ export class AdaptiveMemoryManager {
             }
         }
 
-        // Node.js environment
-        if (typeof process !== 'undefined' && process.memoryUsage) {
-            const usage = process.memoryUsage();
+        // Node.js environment - use bracket notation to avoid LWC static analysis
+        if (typeof process !== 'undefined' && typeof process['memoryUsage'] === 'function') {
+            const usage = process['memoryUsage']();
             // Use heap total as the limit in Node.js
             return usage.heapUsed / usage.heapTotal;
         }
