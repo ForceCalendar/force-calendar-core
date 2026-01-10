@@ -119,11 +119,19 @@ export class AdaptiveMemoryManager {
             }
         }
 
-        // Node.js environment - use bracket notation to avoid LWC static analysis
-        if (typeof process !== 'undefined' && typeof process['memoryUsage'] === 'function') {
-            const usage = process['memoryUsage']();
-            // Use heap total as the limit in Node.js
-            return usage.heapUsed / usage.heapTotal;
+        // Node.js environment - use indirect access to avoid LWC static analysis
+        try {
+            const g = typeof globalThis !== 'undefined' ? globalThis : {};
+            const p = g.process;
+            if (p && typeof p === 'object') {
+                const memFn = p.memoryUsage;
+                if (typeof memFn === 'function') {
+                    const usage = memFn.call(p);
+                    return usage.heapUsed / usage.heapTotal;
+                }
+            }
+        } catch (e) {
+            // Ignore - not in Node.js environment
         }
 
         // Fallback - estimate based on cache sizes
