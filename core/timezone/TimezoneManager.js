@@ -343,13 +343,13 @@ export class TimezoneManager {
         if (!tzString) return 'UTC';
 
         // Check if it's already an IANA identifier
-        if (this.database.timezones.hasOwnProperty(tzString)) {
+        if (Object.prototype.hasOwnProperty.call(this.database.timezones, tzString)) {
             return tzString;
         }
 
         // Check abbreviations
         const upperTz = tzString.toUpperCase();
-        if (this.database.abbreviations && this.database.abbreviations.hasOwnProperty(upperTz)) {
+        if (this.database.abbreviations && Object.prototype.hasOwnProperty.call(this.database.abbreviations, upperTz)) {
             return this.database.abbreviations[upperTz];
         }
 

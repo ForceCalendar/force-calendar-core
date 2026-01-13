@@ -40,7 +40,7 @@ export class RecurrenceEngine {
     let lastOffset = tzManager.getTimezoneOffset(currentDate, eventTimezone);
 
     // Track last date to detect infinite loop (date not advancing)
-    let lastDateTimestamp = null;
+    const lastDateTimestamp = null;
     let stuckCount = 0;
     const maxStuckIterations = 3;
 
@@ -267,11 +267,11 @@ export class RecurrenceEngine {
           return Math.abs(exceptionDate.getTime() - dateTime) < 1000; // Within 1 second
         }
         return exceptionDate.toDateString() === dateStr;
-      } else {
+      } 
         // Simple date exception
         const exceptionDate = exDate instanceof Date ? exDate : new Date(exDate);
         return exceptionDate.toDateString() === dateStr;
-      }
+      
     });
   }
 
@@ -327,9 +327,9 @@ export class RecurrenceEngine {
 
       if (dateStr.endsWith('Z')) {
         return new Date(Date.UTC(year, month, day, hour, minute, second));
-      } else {
+      } 
         return new Date(year, month, day, hour, minute, second);
-      }
+      
     }
 
     // Fallback to standard date parsing

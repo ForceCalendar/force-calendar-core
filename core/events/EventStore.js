@@ -226,12 +226,12 @@ export class EventStore {
     }
 
     // Filter by all-day events
-    if (filters.hasOwnProperty('allDay')) {
+    if (Object.prototype.hasOwnProperty.call(filters, 'allDay')) {
       results = results.filter(event => event.allDay === filters.allDay);
     }
 
     // Filter by recurring
-    if (filters.hasOwnProperty('recurring')) {
+    if (Object.prototype.hasOwnProperty.call(filters, 'recurring')) {
       results = results.filter(event => event.recurring === filters.recurring);
     }
 
@@ -250,7 +250,7 @@ export class EventStore {
     }
 
     // Filter by having attendees
-    if (filters.hasOwnProperty('hasAttendees')) {
+    if (Object.prototype.hasOwnProperty.call(filters, 'hasAttendees')) {
       results = results.filter(event => filters.hasAttendees ? event.hasAttendees : !event.hasAttendees);
     }
 

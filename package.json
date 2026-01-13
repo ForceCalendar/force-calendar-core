@@ -11,7 +11,12 @@
   "scripts": {
     "test": "node tests/run-all.js",
     "test:ics": "node tests/integration/test-ics.js",
-    "test:search": "node tests/integration/test-search.js"
+    "test:search": "node tests/integration/test-search.js",
+    "lint": "eslint core/ --ext .js",
+    "lint:fix": "eslint core/ --ext .js --fix",
+    "format": "prettier --write \"core/**/*.js\"",
+    "format:check": "prettier --check \"core/**/*.js\"",
+    "quality": "npm run lint && npm run format:check"
   },
   "exports": {
     ".": "./core/index.js",

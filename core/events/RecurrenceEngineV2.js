@@ -609,7 +609,7 @@ export class RecurrenceEngineV2 {
      */
     clearEventCache(eventId) {
         for (const key of this.occurrenceCache.keys()) {
-            if (key.startsWith(eventId + '_')) {
+            if (key.startsWith(`${eventId  }_`)) {
                 this.occurrenceCache.delete(key);
             }
         }

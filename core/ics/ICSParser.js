@@ -39,7 +39,7 @@ export class ICSParser {
         let inEvent = false;
         let inAlarm = false;
 
-        for (let line of lines) {
+        for (const line of lines) {
             // Skip empty lines
             if (!line.trim()) continue;
 
@@ -248,7 +248,7 @@ export class ICSParser {
                 event.category = value.split(',')[0]; // Take first category
                 break;
 
-            case 'STATUS':
+            case 'STATUS': {
                 const statusMap = {
                     'TENTATIVE': 'tentative',
                     'CONFIRMED': 'confirmed',
@@ -256,6 +256,7 @@ export class ICSParser {
                 };
                 event.status = statusMap[value] || 'confirmed';
                 break;
+            }
 
             case 'TRANSP':
                 event.showAs = value === 'TRANSPARENT' ? 'free' : 'busy';
@@ -265,7 +266,7 @@ export class ICSParser {
                 event.organizer = value.replace('mailto:', '');
                 break;
 
-            case 'ATTENDEE':
+            case 'ATTENDEE': {
                 if (!event.attendees) event.attendees = [];
                 const email = value.replace('mailto:', '');
                 event.attendees.push({
@@ -273,6 +274,7 @@ export class ICSParser {
                     name: email.split('@')[0] // Use email prefix as name
                 });
                 break;
+            }
 
             case 'RRULE':
                 event.recurrence = value;
@@ -308,10 +310,10 @@ export class ICSParser {
         if (dateString.endsWith('Z')) {
             // UTC time
             return new Date(Date.UTC(year, month, day, hour, minute, second));
-        } else {
+        } 
             // Local time
             return new Date(year, month, day, hour, minute, second);
-        }
+        
     }
 
     /**
@@ -365,7 +367,7 @@ export class ICSParser {
             // Continuation lines (with space prefix)
             while (remaining.length > 0) {
                 const chunk = remaining.substr(0, this.maxLineLength - 1);
-                folded.push(' ' + chunk);
+                folded.push(` ${  chunk}`);
                 remaining = remaining.substr(chunk.length);
             }
 

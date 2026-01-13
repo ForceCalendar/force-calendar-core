@@ -288,7 +288,7 @@ export class EventSearch {
         const events = this.eventStore.getAllEvents();
 
         for (const event of events) {
-            const value = event[field] || (includeEmpty ? '(No ' + field + ')' : null);
+            const value = event[field] || (includeEmpty ? `(No ${  field  })` : null);
             if (value === null) continue;
 
             if (!groups.has(value)) {

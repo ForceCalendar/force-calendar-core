@@ -374,7 +374,7 @@ export class Event {
    * @returns {boolean} True if event spans multiple days
    */
   get isMultiDay() {
-    if (!this._cache.hasOwnProperty('isMultiDay')) {
+    if (!Object.prototype.hasOwnProperty.call(this._cache, 'isMultiDay')) {
       const startDay = this.start.toDateString();
       const endDay = this.end.toDateString();
       this._cache.isMultiDay = startDay !== endDay;
@@ -417,10 +417,10 @@ export class Event {
       dayEnd.setHours(23, 59, 59, 999);
 
       return this.start <= dayEnd && this.end >= dayStart;
-    } else {
+    } 
       // Single day event: check if it's on the same day
       return startString === dateString;
-    }
+    
   }
 
   /**
@@ -436,9 +436,9 @@ export class Event {
     } else if (otherEvent && otherEvent.start && otherEvent.end) {
       // Allow checking against time ranges
       return !(this.end <= otherEvent.start || this.start >= otherEvent.end);
-    } else {
+    } 
       throw new Error('Parameter must be an Event instance or have start/end properties');
-    }
+    
   }
 
   /**
